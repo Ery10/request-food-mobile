@@ -1,43 +1,61 @@
 import React, { createContext, ReactNode, useState, useCallback } from "react";
-import { ItemProps } from "../../data/itemData";
-import { bebidas, crepes, salgados } from '../../data/itemData'
+import { ItemProps } from "../../mock/menu";
+import { menuProducts } from "../../mock/menu";
 
 export interface ProductsContextType {
-  cart: ItemProps[];
-  crepes: ItemProps[];
-  salgados: ItemProps[];
-  bebidas: ItemProps[];
+  cart?: ItemProps[];
+  data: any;
   addToCart: (product: ItemProps, quantity: number) => void;
   removeFromCart: (product: ItemProps) => void;
 }
 
-export const ProductsContext = createContext<ProductsContextType | undefined>(undefined);
+export const ProductsContext = createContext<ProductsContextType | undefined>(
+  undefined
+);
 
-export const ProductsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const ProductsProvider = ({ children }: { children: ReactNode }) => {
   const [cart, setCart] = useState<ItemProps[]>([]);
+  const [data, setData] = useState(menuProducts as any);
 
-  const addToCart = useCallback((product: ItemProps, quantity: number) => {
-    const existingProduct = cart.find((item) => item.title === product.title);
+  console.log("data", data);
+  // console.log("data", data);
 
-    if (existingProduct) {
-      const updatedCart = cart.map((item) =>
-        item.title === product.title
-          ? { ...item, quantity: item.quantity + quantity }
-          : item
+  const addToCart = useCallback(
+    (product: ItemProps) => {
+      // const existingProduct = cart.find((item) => item.title === product.title);
+      console.log("product", product);
+      const findProduct = data[0].Crepes.map(
+        (item: {
+          title: string;
+          price: number;
+          quantity: number;
+          newPrice: number;
+        }) => {
+          if (item.title === product.title) {
+            item.price = item.newPrice + product.price;
+            // item.price += product.price;
+            item.quantity += 1;
+          }
+          return item;
+        }
       );
-      setCart(updatedCart);
-    } else {
-      setCart([...cart, { ...product, quantity }]);
-    }
-  }, [cart]);
+      console.log("findProduct", findProduct);
 
-  const removeFromCart = useCallback((product: ItemProps) => {
-    const updatedCart = cart.filter((item) => item.title !== product.title);
-    setCart(updatedCart);
-  }, [cart]);
+      setData([...data, { Crepes: findProduct }]);
+    },
+    [data]
+  );
+
+  const removeFromCart = useCallback(
+    (product: ItemProps) => {
+      const updatedCart = cart.filter((item) => item.title !== product.title);
+      setCart(updatedCart);
+    },
+    [cart]
+  );
 
   return (
-    <ProductsContext.Provider value={{ cart, crepes, salgados, bebidas, addToCart, removeFromCart }}>
+    <ProductsContext.Provider value={{ cart, data, addToCart, removeFromCart }}>
       {children}
     </ProductsContext.Provider>
   );
