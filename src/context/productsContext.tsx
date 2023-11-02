@@ -19,7 +19,7 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
 
   console.log("data", data);
   // console.log("data", data);
-
+  // Na função addToCart receber dinamicamente o valor do index e a key pra saber se ele é crepe etc..
   const addToCart = useCallback(
     (product: ItemProps) => {
       // const existingProduct = cart.find((item) => item.title === product.title);
