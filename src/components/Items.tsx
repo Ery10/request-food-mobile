@@ -3,14 +3,12 @@ import { View, Text, StyleSheet, Image } from "react-native";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
 import * as Font from "expo-font";
-import {
-  ProductsContext,
-  ProductsContextType,
-} from "../context/productsContext";
+import { ProductsContext, ProductsContextType } from "../context/productsContext";
+import { menuProducts } from "../../mock/menu";
 
 export const Items = React.memo(() => {
   const [fontLoaded, setFontLoaded] = useState(false);
-  const { addToCart, removeFromCart, data } = useContext<ProductsContextType>(
+  const { addToCart, removeFromCart, totalQuantity } = useContext<ProductsContextType>(
     ProductsContext as any
   );
 
@@ -33,16 +31,17 @@ export const Items = React.memo(() => {
     <FlatList
       showsVerticalScrollIndicator={false}
       style={{ width: "100%" }}
-      data={[
-        { title: "Crepes", data: data[0].Crepes },
-        { title: "Salgados", data: data[1].Salgados },
-        { title: "Bebidas", data: data[2].Bebidas },
-      ]}
+      data={menuProducts}
       renderItem={({ item, index }) => (
         <View style={{ paddingBottom: index === 2 ? 100 : 0 }}>
-          <Text style={styles.h1}>{item.title}</Text>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+            <Text style={styles.h1}>{item.category}</Text>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text>{totalQuantity}</Text>
+            </View>
+          </View>
           <FlatList
-            data={item.data}
+            data={item.items}
             renderItem={({ item: product }) => (
               <View style={styles.card}>
                 <Image source={product.image} style={styles.image} />
@@ -64,14 +63,12 @@ export const Items = React.memo(() => {
                       />
                     </TouchableOpacity>
                     <Text>{product.quantity}</Text>
-                    <TouchableOpacity
-                      onPress={() => addToCart(product, product.quantity)}
-                    >
+                    <TouchableOpacity onPress={() => addToCart(product)}>
                       <Ionicons name="add-circle" size={24} color="#F1C92C" />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.customButton}>
                       <Text style={styles.buttonText}>
-                        Adicionar R${product.price.toFixed(2)}
+                        Adicionar R${(product.price * product.quantity).toFixed(2)}
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -82,7 +79,7 @@ export const Items = React.memo(() => {
           />
         </View>
       )}
-      keyExtractor={(item) => item.title}
+      keyExtractor={(item) => item.category}
     />
   );
 });

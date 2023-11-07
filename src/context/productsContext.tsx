@@ -1,61 +1,62 @@
-import React, { createContext, ReactNode, useState, useCallback } from "react";
+import React, { createContext, ReactNode, useState, useCallback, useEffect } from "react";
 import { ItemProps } from "../../mock/menu";
 import { menuProducts } from "../../mock/menu";
 
+const MIN_QUANTITY = 1;
+const MAX_QUANTITY = 9;
+
 export interface ProductsContextType {
-  cart?: ItemProps[];
-  data: any;
-  addToCart: (product: ItemProps, quantity: number) => void;
+  cart: ItemProps[];
+  totalQuantity: number;
+  addToCart: (product: ItemProps) => void;
   removeFromCart: (product: ItemProps) => void;
+  initialTotalQuantity: number;
 }
 
-export const ProductsContext = createContext<ProductsContextType | undefined>(
-  undefined
-);
+export const ProductsContext = createContext<ProductsContextType | undefined>(undefined);
 
 export const ProductsProvider = ({ children }: { children: ReactNode }) => {
   const [cart, setCart] = useState<ItemProps[]>([]);
-  const [data, setData] = useState(menuProducts as any);
+  const [totalQuantity, setTotalQuantity] = useState(0);
+  const [initialTotalQuantity, setInitialTotalQuantity] = useState(0);
 
-  console.log("data", data);
-  // console.log("data", data);
-  // Na função addToCart receber dinamicamente o valor do index e a key pra saber se ele é crepe etc..
   const addToCart = useCallback(
     (product: ItemProps) => {
-      // const existingProduct = cart.find((item) => item.title === product.title);
-      console.log("product", product);
-      const findProduct = data[0].Crepes.map(
-        (item: {
-          title: string;
-          price: number;
-          quantity: number;
-          newPrice: number;
-        }) => {
-          if (item.title === product.title) {
-            item.price = item.newPrice + product.price;
-            // item.price += product.price;
-            item.quantity += 1;
-          }
-          return item;
-        }
-      );
-      console.log("findProduct", findProduct);
+      // Encontre o item no carrinho (se existir)
+      const existingItem = cart.find((item) => item.title === product.title);
 
-      setData([...data, { Crepes: findProduct }]);
+      if (existingItem) {
+        if (existingItem.quantity < MAX_QUANTITY) {
+          existingItem.quantity += 1;
+          setTotalQuantity((prevTotal) => prevTotal + 1);
+        }
+      } else {
+        if (product.quantity < MAX_QUANTITY) {
+          product.quantity += 1;
+          setCart((prevCart) => [...prevCart, product]);
+          setTotalQuantity((prevTotal) => prevTotal + 1);
+        }
+      }
     },
-    [data]
+    [cart]
   );
 
   const removeFromCart = useCallback(
     (product: ItemProps) => {
-      const updatedCart = cart.filter((item) => item.title !== product.title);
-      setCart(updatedCart);
+      const existingItem = cart.find((item) => item.title === product.title);
+
+      if (existingItem) {
+        if (existingItem.quantity > MIN_QUANTITY) {
+          existingItem.quantity -= 1;
+          setTotalQuantity((prevTotal) => prevTotal - 1);
+        }
+      }
     },
     [cart]
   );
 
   return (
-    <ProductsContext.Provider value={{ cart, data, addToCart, removeFromCart }}>
+    <ProductsContext.Provider value={{ cart, totalQuantity, addToCart, removeFromCart, initialTotalQuantity }}>
       {children}
     </ProductsContext.Provider>
   );

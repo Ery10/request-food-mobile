@@ -3,6 +3,8 @@ export interface ItemProps {
   title: string;
   price: number;
   quantity: number;
+  category?: string;
+  newPrice?: number;
 }
 
 // Constantes para as imagens
@@ -43,7 +45,8 @@ const imageH2oLimoneto = require("../assets/images/bebidas/h2o-limoneto.webp");
 // Dados
 export const menuProducts = [
   {
-    Crepes: [
+    category: "Crepes",
+    items: [
       {
         image: imageCamarao,
         title: "Camarão ao catupiry",
@@ -144,7 +147,8 @@ export const menuProducts = [
     ],
   },
   {
-    Salgados: [
+    category: "Salgados",
+    items: [
       {
         image: imageCoxinhaCharque,
         title: "Coxinha de charque",
@@ -214,7 +218,8 @@ export const menuProducts = [
     ],
   },
   {
-    Bebidas: [
+    category: "Bebidas",
+    items: [
       {
         image: imageSucosPolpa,
         title: "Sucos de Polpa (500ml)",
