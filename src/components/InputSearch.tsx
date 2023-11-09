@@ -3,13 +3,18 @@ import { StyleSheet, TextInput, View } from 'react-native';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-export function InputSearch() {
+interface InputSearchProps {
+  onSearchChange: (newSearchText: string) => void;
+}
+
+export function InputSearch({ onSearchChange }: InputSearchProps) {
   const [text, setText] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const textInputRef = useRef<TextInput>(null);
 
   const handleTextChange = (newText: string) => {
     setText(newText);
+    onSearchChange(newText); // Chame a função de pesquisa quando o texto for alterado
   };
 
   const handleInputFocus = () => {
@@ -23,6 +28,7 @@ export function InputSearch() {
   const handleClearText = () => {
     setText('');
     textInputRef.current?.clear();
+    onSearchChange(''); // Chame a função de pesquisa para limpar a pesquisa
   };
 
   return (
