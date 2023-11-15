@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Font from 'expo-font';
 
 import { ProductsContext, ProductsContextType } from '../context/productsContext';
-import { menuProducts } from '../../mock/menu';
+import { menuProducts, ItemProps } from '../../mock/menu';
 
 interface ItemsProps {
   searchText: string;
@@ -12,7 +12,12 @@ interface ItemsProps {
 
 export const Items: React.FC<ItemsProps> = ({ searchText }) => {
   const [fontLoaded, setFontLoaded] = useState(false);
-  const { addToCart, removeFromCart, totalQuantity } = useContext<ProductsContextType>(ProductsContext as any);
+  const { addToCart, removeFromCart, totalQuantity, setSelectedProduct  } = useContext<ProductsContextType>(ProductsContext as any);
+  
+  const handleProductSelect  = (product: ItemProps) => {
+    setSelectedProduct(product);
+    console.log('Produto atual:', product); // Exibe o estado atual do produto
+  };
 
   useEffect(() => {
     const loadFonts = async () => {
@@ -67,11 +72,11 @@ export const Items: React.FC<ItemsProps> = ({ searchText }) => {
                       <Ionicons name="remove-circle" size={24} color="#F1C92C" />
                     </TouchableOpacity>
                     <Text>{product.quantity}</Text>
-                    <TouchableOpacity onPress={() => addToCart(product)}>
+                    <TouchableOpacity onPress={() => addToCart(product) }>
                       <Ionicons name="add-circle" size={24} color="#F1C92C" />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.customButton}>
-                      <Text style={styles.buttonText}>{`Adicionar R$${(product.price * product.quantity).toFixed(2)}`}</Text>
+                    <TouchableOpacity onPress={() => handleProductSelect (product)} style={styles.customButton}>
+                      <Text style={styles.buttonText}>{`Adicionar R$${product.newPrice.toFixed(2)}`}</Text>
                     </TouchableOpacity>
                   </View>
                 </View>

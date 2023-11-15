@@ -5,9 +5,11 @@ import useProducts from "../hook/quantityItems";
 export interface ProductsContextType {
   cart: ItemProps[];
   totalQuantity: number;
+  // selectedProduct: ItemProps | null;
+  // setSelectedProduct: (product: ItemProps | null) => void;
   addToCart: (product: ItemProps) => void;
   removeFromCart: (product: ItemProps) => void;
-  initialTotalQuantity: number;
+  initialTotalQuantity: any;
 }
 
 export const ProductsContext = createContext<ProductsContextType | undefined>(
