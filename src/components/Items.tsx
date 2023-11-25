@@ -8,14 +8,14 @@ import { menuProducts, ItemProps } from '../../mock/menu';
 
 interface ItemsProps {
   searchText: string;
+  tableId?: number;
 }
 
 export const Items: React.FC<ItemsProps> = ({ searchText }) => {
   const [fontLoaded, setFontLoaded] = useState(false);
-  const { addToCart, removeFromCart, totalQuantity, setSelectedProduct  } = useContext<ProductsContextType>(ProductsContext as any);
-  
+  const { addToCart, removeFromCart, totalQuantity } = useContext<ProductsContextType>(ProductsContext as any);
+
   const handleProductSelect  = (product: ItemProps) => {
-    setSelectedProduct(product);
     console.log('Produto atual:', product); // Exibe o estado atual do produto
   };
 
@@ -47,49 +47,55 @@ export const Items: React.FC<ItemsProps> = ({ searchText }) => {
     : menuProducts;
 
   return (
-    <FlatList
-      showsVerticalScrollIndicator={false}
-      style={{ width: '100%' }}
-      data={filteredProducts}
-      renderItem={({ item, index }) => (
-        <View style={{ paddingBottom: 80, paddingTop: index === 0 ? 40 : 0 }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Text style={styles.h1}>{item.category}</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text>{totalQuantity}</Text>
-            </View>
-          </View>
-          <FlatList
-            data={item.items}
-            renderItem={({ item: product }) => (
-              <View style={styles.card}>
-                <Image source={product.image} style={styles.image} />
-                <View style={{ gap: 8 }}>
-                  <Text style={styles.title}>{product.title}</Text>
-                  <Text style={styles.price}>{`R$${product.price.toFixed(2)}`}</Text>
-                  <View style={{ flexDirection: 'row', gap: 2, alignItems: 'center' }}>
-                    <TouchableOpacity onPress={() => removeFromCart(product)}>
-                      <Ionicons name="remove-circle" size={24} color="#F1C92C" />
-                    </TouchableOpacity>
-                    <Text>{product.quantity}</Text>
-                    <TouchableOpacity onPress={() => addToCart(product) }>
-                      <Ionicons name="add-circle" size={24} color="#F1C92C" />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => handleProductSelect (product)} style={styles.customButton}>
-                      <Text style={styles.buttonText}>{`Adicionar R$${product.newPrice.toFixed(2)}`}</Text>
-                    </TouchableOpacity>
-                  </View>
+    <View>
+      {filteredProducts.length === 0 ? (
+        <Text style={styles.noItemsText}>Nenhum item encontrado...</Text>
+      ) : (
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          style={{ width: '100%' }}
+          data={filteredProducts}
+          renderItem={({ item, index }) => (
+            <View style={{ paddingBottom: 80, paddingTop: index === 0 ? 40 : 0 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Text style={styles.h1}>{item.category}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Text>{totalQuantity}</Text>
                 </View>
               </View>
-            )}
-            keyExtractor={(product) => product.title}
-          />
-        </View>
+              <FlatList
+                data={item.items}
+                renderItem={({ item: product }) => (
+                  <View style={styles.card}>
+                    <Image source={product.image} style={styles.image} />
+                    <View style={{ gap: 8 }}>
+                      <Text style={styles.title}>{product.title}</Text>
+                      <Text style={styles.price}>{`R$${product.price.toFixed(2)}`}</Text>
+                      <View style={{ flexDirection: 'row', gap: 2, alignItems: 'center' }}>
+                        <TouchableOpacity onPress={() => removeFromCart(product)}>
+                          <Ionicons name="remove-circle" size={24} color="#F1C92C" />
+                        </TouchableOpacity>
+                        <Text>{product.quantity}</Text>
+                        <TouchableOpacity onPress={() => addToCart(product) }>
+                          <Ionicons name="add-circle" size={24} color="#F1C92C" />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => handleProductSelect (product)} style={styles.customButton}>
+                          <Text style={styles.buttonText}>{`Adicionar R$${product.newPrice.toFixed(2)}`}</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
+                )}
+                keyExtractor={(product) => product.title}
+              />
+            </View>
+          )}
+          keyExtractor={(item) => item.category}
+        />
       )}
-      keyExtractor={(item) => item.category}
-    />
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   h1: {
@@ -134,5 +140,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     fontSize: 12,
+  },
+  noItemsText: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginTop: 16,
+    color: 'gray', // Cor opcional, ajuste conforme necessário
   },
 });
