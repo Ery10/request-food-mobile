@@ -2,21 +2,19 @@ import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Font from 'expo-font';
-
 import { ProductsContext, ProductsContextType } from '../context/productsContext';
 import { menuProducts, ItemProps } from '../../mock/menu';
 
 interface ItemsProps {
   searchText: string;
-  tableId?: number;
 }
 
 export const Items: React.FC<ItemsProps> = ({ searchText }) => {
   const [fontLoaded, setFontLoaded] = useState(false);
-  const { addToCart, removeFromCart, totalQuantity } = useContext<ProductsContextType>(ProductsContext as any);
+  const { addToCart, removeFromCart, totalQuantity, tableId } = useContext<ProductsContextType>(ProductsContext as any);
 
-  const handleProductSelect  = (product: ItemProps) => {
-    console.log('Produto atual:', product); // Exibe o estado atual do produto
+  const handleProductSelect = (product: ItemProps) => {
+    console.log('Produto atual:', product, 'Mesa selecionada:', tableId);
   };
 
   useEffect(() => {
@@ -79,7 +77,7 @@ export const Items: React.FC<ItemsProps> = ({ searchText }) => {
                         <TouchableOpacity onPress={() => addToCart(product) }>
                           <Ionicons name="add-circle" size={24} color="#F1C92C" />
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => handleProductSelect (product)} style={styles.customButton}>
+                        <TouchableOpacity onPress={() => handleProductSelect(product)} style={styles.customButton}>
                           <Text style={styles.buttonText}>{`Adicionar R$${product.newPrice.toFixed(2)}`}</Text>
                         </TouchableOpacity>
                       </View>

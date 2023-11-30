@@ -14,7 +14,7 @@ export function InputSearch({ onSearchChange }: InputSearchProps) {
 
   const handleTextChange = (newText: string) => {
     setText(newText);
-    onSearchChange(newText); // Chame a função de pesquisa quando o texto for alterado
+    onSearchChange(newText); // Chama a função de pesquisa quando o texto for alterado
   };
 
   const handleInputFocus = () => {

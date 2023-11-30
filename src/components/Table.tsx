@@ -1,21 +1,26 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import useProducts from '../hook/useProducts';
 
 const Table = ({ onTableSelect }: { onTableSelect: (tableId: number) => void }) => {
   const [tableData, setTableData] = useState(
     Array.from({ length: 5 }, (_, index) => ({ id: index, name: `Mesa ${index + 1}` }))
   );
   const [editedName, setEditedName] = useState('');
-  const [selectedTable, setSelectedTable] = useState<number | null>(null);
+  const { tableId, setTableId, setSelectedTableContext, selectedTable, setSelectedTable} = useProducts();
 
   const handleTableSelect = (tableId: number) => {
-    // Se a mesa já estiver selecionada, desselecione
-    if (selectedTable === tableId) {
-      setSelectedTable(null);
+    if (tableId === selectedTable) {
+      setSelectedTableContext(null);
+      setTableId(null);
     } else {
-      setSelectedTable(tableId);
+      setSelectedTableContext(tableId);
+      setTableId(tableId);
     }
+
+    onTableSelect(tableId); // Chama a função externa após selecionar a mesa
+    console.log("ID da mesa selecionada:", tableId);
   };
 
   const addTable = () => {

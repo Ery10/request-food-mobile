@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -6,23 +6,28 @@ import { Ionicons } from '@expo/vector-icons';
 import { InputSearch } from '../../src/components/InputSearch';
 import { Items } from '../../src/components/Items';
 import Table from '../../src/components/Table';
+import useProducts from '../../src/hook/useProducts';
 
 export default function Home() {
   const [searchText, setSearchText] = useState('');
   const [selectedTable, setSelectedTable] = useState<number | null>(null);
+
+  const { setSelectedTableContext } = useProducts();
 
   const handleSearchChange = (newSearchText: string) => {
     setSearchText(newSearchText);
   };
 
   const handleTableSelect = (tableId: number) => {
+    setSelectedTableContext(tableId);
     setSelectedTable(tableId);
   };
-
-  const handleBackToTables = () => {
-    // Limpar a seleção da mesa, voltando para a visualização de mesas
-    setSelectedTable(null);
-  };
+    
+    const handleBackToTables = () => {
+      // Limpar a seleção da mesa, voltando para a visualização de mesas
+      setSelectedTableContext(null);
+      setSelectedTable(null);
+    };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -40,7 +45,7 @@ export default function Home() {
       )}
       {selectedTable !== null && (
         <View style={styles.content}>
-          <Items searchText={searchText} tableId={selectedTable} />
+          <Items searchText={searchText} />
         </View>
       )}
     </SafeAreaView>

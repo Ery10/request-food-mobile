@@ -1,6 +1,6 @@
 import React, { createContext, ReactNode } from "react";
 import { ItemProps } from "../../mock/menu";
-import useProducts from "../hook/quantityItems";
+import useProducts from "../hook/useProducts";
 
 export interface ProductsContextType {
   cart: ItemProps[];
@@ -8,6 +8,9 @@ export interface ProductsContextType {
   addToCart: (product: ItemProps) => void;
   removeFromCart: (product: ItemProps) => void;
   initialTotalQuantity: any;
+  selectedTable: number | null; // Adicione esta linha
+  setSelectedTable: (tableId: number | null) => void; 
+  tableId: number | null;
 }
 
 export const ProductsContext = createContext<ProductsContextType | undefined>(
@@ -21,6 +24,9 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
     addToCart,
     removeFromCart,
     initialTotalQuantity,
+    selectedTable,
+    setSelectedTable,
+    tableId
   } = useProducts();
 
   return (
@@ -31,6 +37,9 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
         addToCart,
         removeFromCart,
         initialTotalQuantity,
+        selectedTable,
+        setSelectedTable, 
+        tableId
       }}
     >
       {children}
